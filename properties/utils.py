@@ -6,11 +6,20 @@ import logging
 logger = logging.getLogger(__name__)
 
 def get_all_properties():
-    queryset = cache.get('all_properties')
-    if queryset is None:
-        queryset = list(Property.objects.all())
-        cache.set('all_properties', queryset, 3600)  # Cache for 1 hour
-    return queryset
+    
+    cached_properties = cache.get('all_properties')
+    
+    if cached_properties is not None:
+       
+        return cached_properties
+    
+    
+    properties = Property.objects.all()
+    
+    
+    cache.set('all_properties', properties, 3600)
+    
+    return properties
 
 def get_redis_cache_metrics():
     conn = get_redis_connection("default")
